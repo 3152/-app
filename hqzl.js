@@ -1,6 +1,6 @@
 /**
- 作者：七叶树(修改版)
- 日期：2024-11-29
+ 作者：临渊(修改版)
+ 日期：2024-1-1
  软件：红旗智联
  功能：账号密码登录版
  
@@ -174,7 +174,7 @@ async function sendMsg(message) {
 function getVersion(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: `https://raw.githubusercontent.com/qiyeshu0/hqzl/refs/heads/main/hqzl.js`,
+            url: `https://raw.gh.fakev.cn/LinYuanovo/scripts/main/hqzl.js`,
         }
         $.get(url, async (err, resp, data) => {
             try {
@@ -291,19 +291,22 @@ function checkResponse(result) {
 function login(phone, password) {
     return new Promise((resolve) => {
         let url = {
-            url: `${baseUrl}/fawcshop/auth/login`,  // 修改登录接口路径
+            url: `${baseUrl}/members/auth/login`,  // 修改登录接口路径
             headers: {
                 "Content-Type": "application/json",
                 "Host": "hqapp.faw.cn",
                 "Connection": "Keep-Alive",
                 "Accept-Encoding": "gzip",
-                "User-Agent": "okhttp/3.11.0"
+                "User-Agent": "okhttp/3.11.0",
+                "platform": "2",
+                "version": "3.18.0"
             },
             body: JSON.stringify({
                 "phone": phone,
                 "password": password,
                 "loginType": "PASSWORD",
-                "deviceId": randomString(32)  // 添加设备ID
+                "deviceId": randomString(32),  // 添加设备ID
+                "platform": "2"
             })
         }
 
@@ -318,8 +321,14 @@ function login(phone, password) {
                     log(`\n\n【debug】===============这是 登录 返回data==============`);
                     log(data)
                 }
+                if (error) {
+                    log(`登录失败，连接异常: ${error}`)
+                    msg += `\n登录失败，连接异常: ${error}`;
+                    resolve(false);
+                    return;
+                }
                 let result = JSON.parse(data);
-                if (result.code === '000000') {  // 使用字符串比较
+                if (checkResponse(result)) {
                     token = result.data.token;
                     aid = result.data.userId;
                     log(`登录成功！`)
@@ -331,13 +340,13 @@ function login(phone, password) {
                     resolve(false);
                 }
             } catch (e) {
-                log(e)
+                log(`登录异常：${e}`)
+                msg += `\n登录异常：${e}`;
                 resolve(false);
             }
         })
     })
 }
-
 /**
  * 执行所有任务
  */
