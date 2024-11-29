@@ -762,7 +762,7 @@ async function Envs() {
 function getVersion(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: `https://raw.gh.fakev.cn/LinYuanovo/scripts/main/hqzl.js`,
+            url: `https://raw.githubusercontent.com/qiyeshu0/hqzl/refs/heads/main/hqzl.js`,
         }
         $.get(url, async (err, resp, data) => {
             try {
